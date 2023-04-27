@@ -1,0 +1,17 @@
+{% extends 'form_base.html' %}
+{% block title %}{{ user.login }}{% endblock %}
+{% block form_content %}
+    <h2 class="mb-5">Профиль</h2>
+    <div class="d-flex flex-row">
+        <img src="{{ user.img_url }}" width="200" height="200" class="d-inline-block align-top" alt="">
+        <div class="container">
+            <p class="text-secondary">#{{ user.id }}</p>
+            <h4>Логин: {{ user.login }}</h4>
+            <h4>О себе:</h4>
+            <p>{{ user.description }}</p>
+            {% if user.is_staff %}
+                <h4 class="text-danger text-bold">ADMIN</h4>
+            {% endif %}
+        </div>
+    </div>
+{% endblock %}

@@ -1,0 +1,35 @@
+{% extends 'form_base.html' %}
+{% import 'macroses.html' as macroses %}
+
+{% block form_content %}
+    <h2>Создание задания</h2>
+    <br>
+    <ul class="nav nav-pills" role="tablist">
+        <li class="nav-item">
+            <a class="nav-link active" data-toggle="pill" href="#text">Текст</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" data-toggle="pill" href="#video">Видео</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" data-toggle="pill" href="#image">Изображение</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" data-toggle="pill" href="#test">Тест</a>
+        </li>
+    </ul>
+    <div class="tab-content">
+        <div id="text" class="container tab-pane active"><br>
+            {{ macroses.text_task_form(text_form) }}
+        </div>
+        <div id="video" class="container tab-pane fade"><br>
+            {{ macroses.video_task_form(video_form) }}
+        </div>
+        <div id="image" class="container tab-pane fade"><br>
+            {{ macroses.image_task_form(image_form) }}
+        </div>
+        <div id="test" class="container tab-pane fade"><br>
+            {{ macroses.test_task_form(test_form) }}
+        </div>
+    </div>
+{% endblock %}

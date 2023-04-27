@@ -1,0 +1,133 @@
+{% macro input_field(field, id='', downtext='') %}
+    <div class="form-group">
+        <label>{{ field.label }}</label>
+        {% if id %}
+            {{ field(id=id, class='form-control') }}
+        {% else %}
+            {{ field(class='form-control') }}
+        {% endif %}
+        {% if downtext != '' %}
+            <small class="form-text text-muted" id="{{ id }}_downtext">{{ downtext }}</small>
+        {% endif %}
+        {% for err in field.errors %}
+            <div class="invalid-feedback">
+                {{ err }}
+            </div>
+        {% endfor %}
+    </div>
+{% endmacro %}
+{% macro checkbox(field, id='') %}
+    <div class="form-group">
+        <div class="form-check">
+            {% if id %}
+                {{ field(id=id, class='form-check-input', type="checkbox") }}
+            {% else %}
+                {{ field(class='form-check-input', type="checkbox") }}
+            {% endif %}
+            <label class="form-check-label" for="invalidCheck3">
+                {{ field.label }}
+            </label>
+            {% for err in field.errors %}
+                <div class="invalid-feedback">
+                    {{ err }}
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+{% endmacro %}
+{% macro submit(field) %}
+    {{ field(class='btn btn-primary', type='submit', **kwargs) }}
+{% endmacro %}
+{% macro file_field(field) %}
+    <div class="form-group">
+        <label>{{ field.label }}</label>
+        {{ field(class='form-control-file') }}
+        {% for err in field.errors %}
+            <div class="invalid-feedback">
+                {{ err }}
+            </div>
+        {% endfor %}
+    </div>
+{% endmacro %}
+{% macro user_icon(user, justify_content="center") %}
+    <div class="d-flex flex-column justify-content-{{ justify_content }}">
+        {% if user %}
+            <a href="{{ user.preview_url }}" class="text-reset text-decoration-none">
+                <img src="{{ user.img_url }}" alt="" width="70" height="70"
+                     class="d-inline-block align-top rounded-circle">
+                <p class="text-wrap text-break text-center">{{ user.login }}</p>
+            </a>
+        {% else %}
+            <img src="{{ url_for('static', filename='images/logo.png') }}" alt="" width="70" height="70"
+                 class="d-inline-block align-top rounded-circle">
+            <p class="text-wrap text-break text-center">Сервер</p>
+        {% endif %}
+    </div>
+{% endmacro %}
+{% macro user_icon_small(user) %}
+    <a href="{{ user.preview_url }}"
+       class="text-reset text-decoration-none ml-auto">
+        <div class="d-flex flex-column justify-content-center pr-3">
+            <img src="{{ user.img_url }}" alt="" width="30" height="30"
+                 class="rounded-circle d-inline-block align-top mx-auto">
+            <p class="p-0 text-center m-0">{{ user.login }}</p>
+        </div>
+    </a>
+{% endmacro %}
+
+{% macro task_card(task) %}
+    <h3>{{ task.title }}</h3>
+    <p>{{ task.description }}</p>
+    <a href="{{ task.url }}" class="btn btn-info">Перейти</a>
+{% endmacro %}
+
+{% macro task_list(tasks) %}
+    <div class="row">
+        {% for task in tasks %}
+            <div class="col-md-6 p-3">
+                <div class="bg-light shadow-lg rounded d-flex flex-column p-3">
+                    {{ task_card(task) }}
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+{% endmacro %}
+
+{% macro task_form_general_fields(form) %}
+    {{ form.hidden_tag() }}
+    {{ input_field(form.title) }}
+    {{ input_field(form.description) }}
+    {{ input_field(form.estimation) }}
+{% endmacro %}
+{% macro text_task_form(form) %}
+    <form method="post">
+        {{ task_form_general_fields(form) }}
+        {{ input_field(form.text) }}
+
+        {{ submit(form.submit) }}
+    </form>
+{% endmacro %}
+{% macro video_task_form(form) %}
+    <form method="post" enctype="multipart/form-data">
+        {{ task_form_general_fields(form) }}
+        {{ file_field(form.video) }}
+
+        {{ submit(form.submit) }}
+    </form>
+{% endmacro %}
+{% macro image_task_form(form) %}
+    <form method="post" enctype="multipart/form-data">
+        {{ task_form_general_fields(form) }}
+        {{ file_field(form.image) }}
+
+        {{ submit(form.submit) }}
+    </form>
+{% endmacro %}
+{% macro test_task_form(form) %}
+    <form method="post">
+        {{ task_form_general_fields(form) }}
+        {{ input_field(form.question) }}
+
+        {{ submit(form.submit) }}
+    </form>
+{% endmacro %}

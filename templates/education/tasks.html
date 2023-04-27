@@ -1,0 +1,10 @@
+{% extends 'form_base.html' %}
+{% import 'macroses.html' as macroses %}
+
+{% block form_content %}
+    <h2>Задания</h2>
+    {% if not current_user.is_student %}
+        <a href="/create_task" class="btn btn-primary">Создать задание</a>
+    {% endif %}
+    {{ macroses.task_list(tasks) }}
+{% endblock %}

@@ -1,0 +1,26 @@
+{% extends 'form_base.html' %}
+{% import 'macroses.html' as utils %}
+{% block form_content %}
+
+    <h2>Регистрация {{ who_registers }}</h2>
+    {% if err %}
+        <div class="alert alert-warning" role="alert">
+            {{ err }}
+        </div>
+    {% endif %}
+    <form method="post">
+
+        {{ form.hidden_tag() }}
+
+        {{ utils.input_field(form.login, 'login', ' ') }}
+        {{ utils.input_field(form.password, 'password') }}
+        {{ utils.input_field(form.password_repeat, 'password_repeat') }}
+
+        <div class="dflex flex-direction-row">
+            {{ utils.submit(form.submit, id='register_submit', disabled=True) }}
+            <a href="/login" class="btn btn-secondary">Уже есть аккаунт</a>
+        </div>
+    </form>
+    <script src="{{ url_for('static', filename='js/register.js') }}"></script>
+{% endblock %}
+

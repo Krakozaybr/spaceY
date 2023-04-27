@@ -1,0 +1,143 @@
+{% extends 'form_base.html' %}
+{% import 'macroses.html' as macroses %}
+{% block form_content %}
+    <h2>Информация о задании</h2>
+    {% if task.video %}
+        <video width="600" controls>
+            <source src="{{ url_for('static', filename='media/videos/' + task.video) }}" type="video/mp4">
+            Ваш браузер не поддерживает видео
+        </video>
+        <br>
+        {{ macroses.video_task_form(form) }}
+    {% elif task.text %}
+        {{ macroses.text_task_form(form) }}
+    {% elif task.question %}
+        {{ macroses.test_task_form(form) }}
+    {% elif task.image %}
+        <img src="{{ url_for('static', 'media/images/' + task.image) }}" alt="" width="1000">
+        {{ macroses.image_task_form(form) }}
+    {% endif %}
+    <button class="btn btn-danger mt-3" id="delete_btn">Удалить</button>
+    <h3 class="mt-4">Прогресс студентов</h3>
+    <table class="table">
+        <thead>
+        <tr>
+            <th scope="col">Дата зачисления</th>
+            <th scope="col">Логин</th>
+            <th scope="col">Состояние</th>
+            <th scope="col">Оценка</th>
+            <th scope="col">Ссылка на профиль</th>
+            <th scope="col"></th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for progress in progresses %}
+            <tr>
+                <th scope="row">{{ progress.user.created_at|date }}</th>
+                <td>{{ progress.user.login }}</td>
+                <td>{{ progress.state }}</td>
+                <td>
+                    {% if progress.estimation %}
+                        {{ progress.estimation }}
+                    {% else %}
+                        Не оценен
+                    {% endif %}
+                </td>
+                <td><a href="{{ progress.user.preview_url }}" class="btn btn-info">Подробнее</a></td>
+                <td>
+                    {% if progress.can_close %}
+                        <button class="btn btn-info make_not_visible" data-id="{{ progress.user.id }}">Закрыть доступ
+                        </button>
+                    {% elif progress.can_estimate %}
+                        <a class="btn btn-success" href="{{ progress.estimation_url }}">Оценить</a>
+                    {% endif %}
+                </td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+    <h3>Студенты, без доступа к заданию</h3>
+    <table class="table">
+        <thead>
+        <tr>
+            <th scope="col">Дата зачисления</th>
+            <th scope="col">Логин</th>
+            <th scope="col">Состояние</th>
+            <th scope="col">Оценка</th>
+            <th scope="col">Ссылка на профиль</th>
+            <th scope="col"></th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for progress in students_dont_see %}
+            <tr>
+                <th scope="row">{{ progress.user.created_at|date }}</th>
+                <td>{{ progress.user.login }}</td>
+                <td>{{ progress.state }}</td>
+                <td>
+                    {% if progress.estimation %}
+                        {{ progress.estimation }}
+                    {% else %}
+                        Не оценен
+                    {% endif %}
+                </td>
+                <td><a href="{{ progress.user.preview_url }}" class="btn btn-info">Подробнее</a></td>
+                <td>
+                    <button class="btn btn-info make_visible" data-id="{{ progress.user.id }}">Открыть доступ
+                    </button>
+                </td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+    <script>
+        const task_id = {{ task.id }};
+
+        function set_visibility(id, state) {
+            $.ajax({
+                url: '/api/set_visibility',
+                method: 'POST',
+                dataType: "json",
+                contentType: 'application/json',
+                data: JSON.stringify({
+                    "user_id": id,
+                    "task_id": task_id,
+                    "state": state,
+                }),
+                success: data => {
+                    window.location.reload();
+                },
+                error: data => {
+                    alert(data)
+                }
+            })
+        }
+
+        $('.make_not_visible').on('click', function () {
+            const id = $(this).data('id')
+            const state = false
+            set_visibility(id, state)
+        })
+
+        $('.make_visible').on('click', function () {
+            const id = $(this).data('id')
+            const state = true
+            set_visibility(id, state)
+        })
+        $('#delete_btn').on('click', function (){
+            $.ajax({
+                url: '/api/delete_task/' + task_id,
+                method: 'POST',
+                dataType: "json",
+                contentType: 'application/json',
+                data: JSON.stringify({}),
+                success: data => {
+                    window.location.href = '/tasks';
+                },
+                error: data => {
+                    alert(data)
+                }
+            })
+        })
+    </script>
+{% endblock %}

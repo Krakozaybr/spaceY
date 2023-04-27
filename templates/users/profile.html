@@ -1,0 +1,55 @@
+{% extends 'form_base.html' %}
+{% import 'macroses.html' as utils %}
+
+{% block title %}
+    Профиль
+{% endblock %}
+
+{% block form_content %}
+    <h2 class="mb-5">Профиль</h2>
+    <div class="d-flex flex-row">
+        <img src="{{ current_user.img_url }}" width="200" height="200" class="d-inline-block align-top" alt="">
+        <div class="container">
+            <p class="text-secondary">#{{ current_user.id }}</p>
+            <h4>Логин: {{ current_user.login }}</h4>
+            <h5 class="text-info">{% if current_user.is_student %}Студент{% else %}Наставник{% endif %} </h5>
+            <div class="mt-5">
+                <form method="post" enctype="multipart/form-data">
+
+                    {{ avatar_form.hidden_tag() }}
+                    {{ utils.file_field(avatar_form.image) }}
+                    {{ utils.submit(avatar_form.submit) }}
+
+                    {% if image_error %}
+                        <div class="invalid-feedback">
+                            {{ image_error }}
+                        </div>
+                    {% endif %}
+
+                </form>
+            </div>
+        </div>
+    </div>
+    <hr class="my-4">
+
+    <h4>Изменить описание</h4>
+    <form method="post">
+
+        {{ change_description_form.hidden_tag() }}
+        {{ utils.input_field(change_description_form.description) }}
+        {{ utils.submit(change_description_form.submit) }}
+
+    </form>
+
+    <h4 class="mt-4">Изменить пароль</h4>
+    <form method="post" class="mt-2">
+
+        {{ change_password_form.hidden_tag() }}
+        {{ utils.input_field(change_password_form.password) }}
+        {{ utils.input_field(change_password_form.new_password) }}
+        {{ utils.submit(change_password_form.submit) }}
+
+    </form>
+
+    <a href="{{ current_user.preview_url }}" class="btn btn-success mt-3">Посмотреть превью профиль</a>
+{% endblock %}

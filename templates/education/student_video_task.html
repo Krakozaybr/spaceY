@@ -1,0 +1,31 @@
+{% extends 'form_base.html' %}
+{% block form_content %}
+    <h2>Видео задание</h2>
+    <h3>{{ task.title }}</h3>
+    <video width="600" controls>
+        <source src="{{ url_for('static', filename='media/videos/' + task.video) }}" type="video/mp4">
+        Ваш браузер не поддерживает видео
+    </video>
+    <br>
+    <button id="confirm" class="btn btn-success">Сдать</button>
+    <script>
+        $('#confirm').on('click', function () {
+            $.ajax({
+                url: '/api/submit_answer',
+                method: 'POST',
+                dataType: "json",
+                contentType: 'application/json',
+                data: JSON.stringify({
+                    "task_id": {{ task.id }},
+                    "choice": '',
+                }),
+                success: data => {
+                    window.location.href = '/tasks';
+                },
+                error: data => {
+                    alert(data)
+                }
+            })
+        })
+    </script>
+{% endblock %}

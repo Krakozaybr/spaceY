@@ -1,0 +1,25 @@
+{% extends 'form_base.html' %}
+{% block form_content %}
+    <h2>Студенты</h2>
+    <p><a href="{{ invite.invite_url }}">Ссылка-приглашение</a></p>
+    <table class="table">
+        <thead>
+        <tr>
+            <th scope="col">Дата зачисления</th>
+            <th scope="col">Логин</th>
+            <th scope="col">Рейтинг</th>
+            <th scope="col">Ссылка на профиль</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for student in students %}
+            <tr>
+                <th scope="row">{{ student.created_at|date }}</th>
+                <td>{{ student.login }}</td>
+                <td>{{ student.rating }}</td>
+                <td><a href="{{ student.preview_url }}" class="btn btn-info">Подробнее</a></td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+{% endblock %}

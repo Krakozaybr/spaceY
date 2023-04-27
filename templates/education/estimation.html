@@ -1,0 +1,44 @@
+{% extends 'form_base.html' %}
+{% block form_content %}
+    <h2>Оценивание</h2>
+    <h3>Ответ студента:</h3>
+    <p>{{ progress.answer }}</p>
+    <div class="form-group">
+        <label>Оценка</label>
+        <input value="{% if progress.estimation %}{{ progress.estimation }}{% endif %}" class="form-control"
+               id="estimation" type="number">
+    </div>
+    <button class="btn btn-success" id="estimate">Оценить</button>
+    <script>
+        const max_value = {{ progress.task.value }};
+        $('#estimation').on('input', function () {
+            const val = +$(this).val()
+            const canSubmit = val >= 0 && val <= max_value
+            if (canSubmit) {
+                $(this).addClass('is-valid')
+                $(this).removeClass('is-invalid')
+            } else {
+                $(this).removeClass('is-valid')
+                $(this).addClass('is-invalid')
+            }
+            $('#estimate').prop('disabled', !canSubmit)
+        })
+        $('#estimate').on('click', function () {
+            $.ajax({
+                url: '/api/estimate/{{ progress.id }}',
+                method: 'POST',
+                dataType: "json",
+                contentType: 'application/json',
+                data: JSON.stringify({
+                    "estimation": $('#estimation').val(),
+                }),
+                success: data => {
+                    window.location.href = '/tasks';
+                },
+                error: data => {
+                    alert(data)
+                }
+            })
+        })
+    </script>
+{% endblock %}

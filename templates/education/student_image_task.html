@@ -1,0 +1,27 @@
+{% extends 'form_base.html' %}
+{% block form_content %}
+    <h2>Задание со схемой</h2>
+    <h3>{{ task.title }}</h3>
+    <img width="600" src="{{ url_for('static', 'media/images/' + task.image) }}" alt="" />
+    <button id="confirm" class="btn btn-success">Сдать</button>
+    <script>
+        $('#confirm').on('click', function () {
+            $.ajax({
+                url: '/api/submit_answer',
+                method: 'POST',
+                dataType: "json",
+                contentType: 'application/json',
+                data: JSON.stringify({
+                    "task_id": {{ task.id }},
+                    "choice": '',
+                }),
+                success: data => {
+                    window.location.href = '/tasks';
+                },
+                error: data => {
+                    alert(data)
+                }
+            })
+        })
+    </script>
+{% endblock %}
